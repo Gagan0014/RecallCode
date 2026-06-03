@@ -1,8 +1,8 @@
 import express from 'express'
 
-import {createUser} from '../controllers/userController.js'
+import {getUser , createUser} from '../controllers/userController.js'
 const router = express.Router();
-router.get("/",createUser)
+router.get("/",getUser)
 router.post("/",createUser);
 router.put("/setting",createUser)
 
