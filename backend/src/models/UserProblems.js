@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const userProblemSchema = new mongoose.Schema({
-    userid:{
+    userId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
@@ -29,4 +29,5 @@ const userProblemSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("UserProblems" , userProblemSchema);
+const UserProblems = mongoose.model("UserProblems" , userProblemSchema);
+export default UserProblems
