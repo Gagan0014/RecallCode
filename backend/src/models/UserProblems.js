@@ -6,7 +6,7 @@ const userProblemSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    probId:{
+    problemId:{
         type: mongoose.Schema.Types.ObjectId,
         ref:"Problem",
         required:true
@@ -27,7 +27,12 @@ const userProblemSchema = new mongoose.Schema({
         type: Date,
         required:true
     }
+    
 });
 
+userProblemSchema.index(
+    { userId: 1, problemId: 1 },
+    { unique: true }
+);
 const UserProblems = mongoose.model("UserProblems" , userProblemSchema);
 export default UserProblems
