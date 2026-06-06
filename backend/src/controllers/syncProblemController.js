@@ -13,7 +13,7 @@ export const syncProblems = async(req,res)=>{
         // dummy data for test 
         let problems = await Problem.find();
         if(problems.length===0){
-        const problems = await Problem.insertMany([
+            problems = await Problem.insertMany([
             {
                 title: "two sum",
                 titleSlug: "two-sum",
