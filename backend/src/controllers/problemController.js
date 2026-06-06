@@ -26,7 +26,7 @@ export const getProblems = async(req,res)=>{
 export const dueProblems = async(req,res)=>{
     try{
         const problems = await UserProblems.find({
-            userId: req.params.userId,
+            userId: req.user.id,
             nextReviewDate:{ $lte: new Date()}
         }).populate("problemId")
         res.status(200).json(problems)
@@ -39,6 +39,11 @@ export const dueProblems = async(req,res)=>{
 export const rateProblem = async(req,res)=>{
     try{
         const {userProblemId , quality} = req.body;
+        if (userProblem.userId.toString() !==req.user.id) {
+            return res.status(403).json({
+                message: "Forbidden"
+            });
+        }
         const userProblem = await UserProblems.findById(userProblemId);
 
         if(!userProblem){

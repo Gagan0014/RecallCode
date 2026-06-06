@@ -20,6 +20,10 @@ emailTime:{
 timeZone:{
     type:String,
     default:"Asia/kolkata"
+},
+password: {
+   type: String,
+   required: true
 }
 });
 
