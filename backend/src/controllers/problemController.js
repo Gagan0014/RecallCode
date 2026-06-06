@@ -51,7 +51,12 @@ export const rateProblem = async(req,res)=>{
                 message: "User Problem Not Found"
             })
         }
-        if(quality<3){
+        if (quality < 0 || quality > 5) {
+             return res.status(400).json({
+                message: "Quality must be between 0 and 5"
+             });
+        }
+        else if(quality<3){
             userProblem.repetitions = 0;
             userProblem.interval = 1;
         }else{

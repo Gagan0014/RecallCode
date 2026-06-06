@@ -24,6 +24,10 @@ timeZone:{
 password: {
    type: String,
    required: true
+},
+reviewTime: {
+    type: String,
+    default: "20:00"
 }
 });
 
