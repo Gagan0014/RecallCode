@@ -7,7 +7,7 @@ export const register = async(req,res)=>{
         const {name , email , password , leetcodeUsername} = req.body;
         const existingUser = await User.findOne({email});
 
-        if(!existingUser){
+        if(existingUser){
             return res.status(200).json({
                 message:"User already exist"
             })
@@ -96,7 +96,7 @@ export const updatePreferences = async(req,res)=>{
             }
         );
 
-        res.json(user);
+        res.status(200)json(user);
     }catch(error){
         res.status(500).json({
             message:error.message

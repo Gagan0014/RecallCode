@@ -40,17 +40,17 @@ export const rateProblem = async(req,res)=>{
     try{
         const {userProblemId , quality} = req.body;
         const userProblem = await UserProblems.findById(userProblemId);
+        if(!userProblem){
+            return res.status(404).json({
+                message: "User Problem Not Found"
+            })
+        }
         if (userProblem.userId.toString() !==req.user.id) {
             return res.status(403).json({
                 message: "Forbidden"
             });
         }
 
-        if(!userProblem){
-            return res.status(404).json({
-                message: "User Problem Not Found"
-            })
-        }
         if (quality < 0 || quality > 5) {
              return res.status(400).json({
                 message: "Quality must be between 0 and 5"
