@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const problemSchema = new mongoose.Schema({
     title:{
         type:String,
-        requried:true
+        required:true
     },
     titleSlug:{
         type:String,
@@ -13,7 +13,7 @@ const problemSchema = new mongoose.Schema({
     difficulty:{
         type:String,
         enum: ["Easy", "Medium", "Hard"],
-        requried:true
+        required:true
     },
     tags:{
         type:String

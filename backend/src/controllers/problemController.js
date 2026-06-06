@@ -8,7 +8,7 @@ export const createProblem = async(req,res)=>{
         res.status(201).json(problem);
     }catch(error){
         res.status(500).json({
-            messgae:error.messgae
+            message:error.message
         })
     }
 }

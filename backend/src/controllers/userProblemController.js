@@ -7,7 +7,7 @@ export const createUserProblem = async(req,res)=>{
     }catch(error){
         console.log(error);
         res.status(500).json({
-            messgae:error.messgae
+            message:error.message
         })
     }
 }
@@ -21,7 +21,7 @@ export const getUserProblems = async(req,res)=>{
         res.status(200).json(userProblems)
     }catch(error){
         res.status(500).json({
-            messgae:error.messgae
+            message:error.message
         })
     }
 }
