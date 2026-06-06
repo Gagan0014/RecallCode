@@ -89,7 +89,8 @@ export const updatePreferences = async(req,res)=>{
             req.user.id,
             {
                 reviewTime: req.body.reviewTime,
-                timeZone: req.body.timeZone
+                timeZone: req.body.timeZone,
+                dailyReviewLimit: req.body.dailyReviewLimit
             },
             {
                 new:true

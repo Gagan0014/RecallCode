@@ -31,6 +31,10 @@ reviewTime: {
 },
 lastReminderSent: {
     type: Date
+},
+dailyReviewLimit: {
+    type: Number,
+    default: 10
 }
 });
 

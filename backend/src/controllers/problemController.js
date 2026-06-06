@@ -13,6 +13,19 @@ export const createProblem = async(req,res)=>{
     }
 }
 
+export const getMyProblems = async(req,res)=>{
+    try{
+        const userProblems = await UserProblems.find({
+            userId: req.user.id
+        }).populate("problemId");
+        res.status(200).json(userProblems);
+    }catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 export const getProblems = async(req,res)=>{
     try{
         const problems = await Problem.find();
@@ -28,7 +41,9 @@ export const dueProblems = async(req,res)=>{
         const problems = await UserProblems.find({
             userId: req.user.id,
             nextReviewDate:{ $lte: new Date()}
-        }).populate("problemId")
+        })
+        .limit(user.dailyReviewLimit)
+        .populate("problemId")
         res.status(200).json(problems)
     }catch(error){
         res.status(500).json({

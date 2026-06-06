@@ -4,9 +4,11 @@ import problemRoutes from './routes/problemRoutes.js'
 import userProblemRoutes from './routes/userProblemRoutes.js'
 import syncRoute from './routes/syncRoute.js'
 import authRoutes from './routes/authRoutes.js';
+import getProblems from './routes/getProblemRoute.js';
 const app = express()
 app.use(express.json())
 
+app.use("/api/getProblems",getProblems);
 app.use("/api/auth", authRoutes);
 app.use("/api/problems",syncRoute);
 app.use("/api/users",userRoutes);
