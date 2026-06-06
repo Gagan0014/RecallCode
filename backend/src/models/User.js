@@ -28,6 +28,9 @@ password: {
 reviewTime: {
     type: String,
     default: "20:00"
+},
+lastReminderSent: {
+    type: Date
 }
 });
 
