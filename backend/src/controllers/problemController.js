@@ -39,12 +39,12 @@ export const dueProblems = async(req,res)=>{
 export const rateProblem = async(req,res)=>{
     try{
         const {userProblemId , quality} = req.body;
+        const userProblem = await UserProblems.findById(userProblemId);
         if (userProblem.userId.toString() !==req.user.id) {
             return res.status(403).json({
                 message: "Forbidden"
             });
         }
-        const userProblem = await UserProblems.findById(userProblemId);
 
         if(!userProblem){
             return res.status(404).json({
@@ -66,7 +66,7 @@ export const rateProblem = async(req,res)=>{
             }else if(userProblem.repetitions === 2){
                 userProblem.interval = 6;
             }else{
-                userProblem.interval = math.round(
+                userProblem.interval = Math.round(
                     userProblem.interval * userProblem.easeFactor
                 );
             }

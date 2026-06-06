@@ -5,7 +5,7 @@ import User from '../models/User.js'
 export const register = async(req,res)=>{
     try{
         const {name , email , password , leetcodeUsername} = req.body;
-        const existingUser = User.findOne({email});
+        const existingUser = await User.findOne({email});
 
         if(!existingUser){
             return res.status(200).json({
