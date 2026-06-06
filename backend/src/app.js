@@ -1,5 +1,4 @@
 import express from 'express'
-// import problemRoutes from './routes/problemRoutes'
 import userRoutes from './routes/userRoutes.js'
 import problemRoutes from './routes/problemRoutes.js'
 import userProblemRoutes from './routes/userProblemRoutes.js'

@@ -3,7 +3,7 @@ import { dueProblems } from '../controllers/problemController.js';
 
 
 export const sendReminderEmail = async(email,dueProblems)=>{
-
+try{
     const transporter = nodemailer.createTransport({
     service:"gmail",
     auth:{
@@ -41,4 +41,7 @@ const problemList = dueProblems
                 ${problemList}
             </ul>`
 });
+}catch(error){
+    console.error(`Failed to send email to ${email}:`, error);
+}
 }
