@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer'
-import { dueProblems } from '../controllers/problemController.js';
 
 
 export const sendReminderEmail = async(email,dueProblems)=>{

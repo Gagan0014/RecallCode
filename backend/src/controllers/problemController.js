@@ -38,6 +38,7 @@ export const getProblems = async(req,res)=>{
 }
 export const dueProblems = async(req,res)=>{
     try{
+        const user = await User.findById(req.user.id);
         const problems = await UserProblems.find({
             userId: req.user.id,
             nextReviewDate:{ $lte: new Date()}

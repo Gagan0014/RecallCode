@@ -35,4 +35,4 @@ userProblemSchema.index(
     { unique: true }
 );
 const UserProblems = mongoose.model("UserProblems" , userProblemSchema);
-export default UserProblems
+export default UserProblems;

@@ -1,5 +1,4 @@
 import UserProblem from '../models/UserProblems.js'
-import { protect } from '../middlewares/authMiddleware.js'
 export const createUserProblem = async(req,res)=>{
     try{
         const userProblem = await UserProblem.create(req.body)
