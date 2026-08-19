@@ -1,8 +1,9 @@
 import express from 'express';
+import { protect } from '../middlewares/authMiddleware.js';
 import { getRecentSubmissions } from '../services/leetcodeService.js';
 const router = express.Router();
 
-router.get("/recent/:username", async(req,res)=>{
+router.get("/recent/:username", protect, async(req,res)=>{
     try{
     const data = await getRecentSubmissions(
         req.params.username

@@ -12,7 +12,7 @@ app.use(express.json())
 
 app.use("/api/getProblems",getProblems);
 app.use("/api/auth", authRoutes);
-app.use("/api/problems",syncRoute);
+app.use("/api/sync", syncRoute);
 app.use("/api/users",userRoutes);
 app.use("/api/problems",problemRoutes);
 app.use("/api/userproblems",userProblemRoutes);
