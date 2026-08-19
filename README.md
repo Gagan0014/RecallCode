@@ -53,6 +53,7 @@ RecallCode solves this by automatically resurfacing previously solved problems a
 * Protected Routes
 * User Preferences
 * Personalized Reminder Settings
+* Admin Dashboard Access
 
 ### Email Reminder Workflow
 
@@ -150,7 +151,8 @@ LeetCode API
   emailTime: String,
   timeZone: String,
   dailyReviewLimit: Number,
-  lastReminderSent: Date
+  lastReminderSent: Date,
+  isAdmin: Boolean
 }
 ```
 
@@ -205,37 +207,76 @@ The rating directly influences:
 
 ## API Endpoints
 
-### Authentication
+### Authentication (Public)
 
 ```http
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/profile
-POST /api/auth/preferences
+POST   /api/auth/register                  # Register new user
+POST   /api/auth/login                     # User login
+GET    /api/auth/profile                   # Get user profile (JWT Required)
+POST   /api/auth/preferences               # Update preferences (JWT Required)
 ```
 
-### Problems
+### Users (Admin Routes)
 
 ```http
-POST /api/problems
-GET  /api/problems
-GET  /api/problems/due
-GET  /api/problems/myproblems
-POST /api/problems/rate
+GET    /api/users                          # Get current user (JWT Required)
+POST   /api/users                          # Create new user (JWT + Admin Required)
 ```
 
-### Synchronization
+### Problems (JWT Required)
 
 ```http
-POST /api/sync/:username
+POST   /api/problems                       # Create new problem
+GET    /api/problems                       # Get all problems
+GET    /api/problems/myproblems            # Get current user's problems
+GET    /api/problems/due                   # Get due problems for review
+POST   /api/problems/rate                  # Rate a problem (for SM-2 update)
 ```
 
-### User Problems
+### Synchronization (JWT Required)
 
 ```http
-POST /api/userproblems
-GET  /api/userproblems
+POST   /api/sync/sync                      # Sync LeetCode problems with user account
 ```
+
+### User Problems (Admin Routes)
+
+```http
+POST   /api/userproblems                   # Create user problem
+GET    /api/userproblems                   # Get all user problems (Admin Required)
+```
+
+### LeetCode Data (JWT Required)
+
+```http
+GET    /api/getProblems/recent/:username   # Get recent submissions from LeetCode
+```
+
+### Health Check (Public)
+
+```http
+GET    /                                   # API health check
+```
+
+---
+
+## Authentication & Security
+
+### JWT Authentication
+- All protected endpoints require a valid JWT token in the `Authorization` header
+- Format: `Authorization: Bearer <token>`
+- Token expires in 7 days
+
+### Admin Access
+- Some endpoints require admin privileges (`isAdmin: true` in database)
+- Admin endpoints:
+  - `POST /api/users` - Create user
+  - `GET /api/userproblems` - View all user problems
+
+### Protected Routes
+- All problem management routes require JWT authentication
+- Each user can only see their own problems (except admins)
+- Rating updates only allowed for user's own problems
 
 ---
 
@@ -291,6 +332,8 @@ npm run dev
 * Implemented MongoDB relationships between Users, Problems, and UserProblems collections.
 * Prevented duplicate imports using synchronization logic and compound indexing.
 * Developed adaptive scheduling based on user recall performance.
+* Implemented role-based access control with JWT authentication and admin middleware.
+* Secured all API endpoints with proper authentication and authorization checks.
 
 ---
 
@@ -298,7 +341,7 @@ npm run dev
 
 ### Backend Completed
 
-* Authentication System
+* Authentication System (JWT)
 * User Preferences
 * LeetCode Synchronization
 * Problem Management
@@ -307,6 +350,8 @@ npm run dev
 * Automated Reminder Emails
 * Timezone Support
 * Daily Review Limits
+* Admin Dashboard Access
+* Secured API Routes
 
 ### Frontend In Development
 
@@ -327,6 +372,7 @@ npm run dev
 * Advanced Review Statistics
 * Mobile-Friendly Interface
 * Docker Deployment
+* Rate Limiting & API Throttling
 
 ---
 
