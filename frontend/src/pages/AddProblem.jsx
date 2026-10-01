@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { problemsAPI } from '../api/problems'
 import { AlertCircle, Plus, Loader } from 'lucide-react'
@@ -10,11 +10,10 @@ export function AddProblem() {
   const [success, setSuccess] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
-    problemNumber: '',
+    titleSlug: '',
     difficulty: 'Medium',
     leetcodeUrl: '',
     tags: '',
-    notes: '',
   })
 
   const handleChange = (e) => {
@@ -25,30 +24,53 @@ export function AddProblem() {
     }))
   }
 
+  const handleTitleChange = (e) => {
+    const title = e.target.value
+    setFormData(prev => ({
+      ...prev,
+      title,
+      titleSlug: title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+    }))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
+    if (!formData.title.trim()) {
+      setError('Problem title is required')
+      setLoading(false)
+      return
+    }
+
+    if (!formData.titleSlug.trim()) {
+      setError('Problem title slug is required')
+      setLoading(false)
+      return
+    }
+
+    if (!['Easy', 'Medium', 'Hard'].includes(formData.difficulty)) {
+      setError('Difficulty must be Easy, Medium, or Hard')
+      setLoading(false)
+      return
+    }
+
     try {
-      // Prepare data
-      const data = {
-        ...formData,
-        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
-        problemNumber: parseInt(formData.problemNumber) || null,
+      const payload = {
+        title: formData.title.trim(),
+        titleSlug: formData.titleSlug.trim(),
+        difficulty: formData.difficulty,
+        tags: formData.tags.trim(),
+        leetcodeUrl: formData.leetcodeUrl.trim(),
       }
 
-      // Call API
-      await problemsAPI.createProblem(data)
+      await problemsAPI.createProblem(payload)
       setSuccess(true)
-
-      // Redirect after 2 seconds
-      setTimeout(() => {
-        navigate('/problems')
-      }, 2000)
+      setTimeout(() => navigate('/problems'), 1500)
     } catch (err) {
       console.error('Error adding problem:', err)
-      setError(err.response?.data?.message || 'Failed to add problem')
+      setError(err.response?.data?.message || 'Failed to add problem. Check required fields and try again.')
     } finally {
       setLoading(false)
     }
@@ -58,7 +80,7 @@ export function AddProblem() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12 text-center">
         <div className="bg-green-50 border border-green-200 rounded-lg p-8">
-          <div className="text-green-600 mb-4">✓</div>
+          <div className="text-green-600 mb-4 text-4xl">✓</div>
           <h2 className="text-2xl font-bold text-green-800 mb-2">Problem Added!</h2>
           <p className="text-green-700 mb-6">Your problem has been added to the learning queue.</p>
           <p className="text-gray-600">Redirecting to problems list...</p>
@@ -80,34 +102,33 @@ export function AddProblem() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Problem Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Problem Title *</label>
             <input
               type="text"
               name="title"
               value={formData.title}
-              onChange={handleChange}
+              onChange={handleTitleChange}
               placeholder="e.g., Two Sum"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
 
-          {/* Problem Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">LeetCode Problem Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Title Slug *</label>
             <input
-              type="number"
-              name="problemNumber"
-              value={formData.problemNumber}
-              onChange={handleChange}
-              placeholder="e.g., 1"
+              type="text"
+              name="titleSlug"
+              value={formData.titleSlug}
+              onChange={(e) => setFormData(prev => ({ ...prev, titleSlug: e.target.value }))}
+              placeholder="e.g., two-sum"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
             />
+            <p className="text-xs text-gray-600 mt-1">Auto-generated from title. Must match LeetCode slug style.</p>
           </div>
 
-          {/* Difficulty */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Difficulty *</label>
             <select
@@ -122,7 +143,6 @@ export function AddProblem() {
             </select>
           </div>
 
-          {/* LeetCode URL */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">LeetCode URL</label>
             <input
@@ -130,38 +150,23 @@ export function AddProblem() {
               name="leetcodeUrl"
               value={formData.leetcodeUrl}
               onChange={handleChange}
-              placeholder="https://leetcode.com/problems/..."
+              placeholder="https://leetcode.com/problems/two-sum/"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
-          {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma-separated)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
             <input
               type="text"
               name="tags"
               value={formData.tags}
               onChange={handleChange}
-              placeholder="e.g., Array, Hash Map, Two Pointers"
+              placeholder="Array, Hash Map"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
-            <textarea
-              name="notes"
-              value={formData.notes}
-              onChange={handleChange}
-              placeholder="Add any notes about your approach or solution..."
-              rows="4"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          {/* Buttons */}
           <div className="flex space-x-4">
             <button
               type="submit"
@@ -191,13 +196,12 @@ export function AddProblem() {
         </form>
       </div>
 
-      {/* Helper Text */}
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-medium text-blue-900 mb-2">Tips:</h3>
+        <h3 className="font-medium text-blue-900 mb-2">Required backend fields:</h3>
         <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Fill in the LeetCode URL to easily access the problem during review</li>
-          <li>• Add relevant tags to categorize and filter problems</li>
-          <li>• Your notes will help you remember your approach</li>
+          <li>• title</li>
+          <li>• titleSlug</li>
+          <li>• difficulty</li>
         </ul>
       </div>
     </div>
