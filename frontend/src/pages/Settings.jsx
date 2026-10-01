@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { authAPI } from '../api/auth'
-import { AlertCircle, CheckCircle, Save, Loader } from 'lucide-react'
+import { problemsAPI } from '../api/problems'
+import { AlertCircle, CheckCircle, Save, Loader, RefreshCw } from 'lucide-react'
 
 export function Settings() {
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [syncing, setSyncing] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
   const [formData, setFormData] = useState({
     dailyReviewLimit: 10,
@@ -62,6 +64,36 @@ export function Settings() {
     }
   }
 
+  const handleSync = async () => {
+    if (!formData.leetcodeUsername.trim()) {
+      setMessage({
+        type: 'error',
+        text: 'Please enter your LeetCode username first'
+      })
+      return
+    }
+
+    setSyncing(true)
+    setMessage({ type: '', text: '' })
+    
+    try {
+      const response = await problemsAPI.syncLeetCode(formData.leetcodeUsername)
+      setMessage({
+        type: 'success',
+        text: `✅ Synced successfully! Added ${response.data.problemsAdded || 0} new problems.`
+      })
+      setTimeout(() => setMessage({ type: '', text: '' }), 5000)
+    } catch (err) {
+      console.error('Error syncing with LeetCode:', err)
+      setMessage({
+        type: 'error',
+        text: err.response?.data?.message || 'Failed to sync with LeetCode. Please check your username.'
+      })
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -78,29 +110,29 @@ export function Settings() {
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Settings</h1>
       <p className="text-gray-600 mb-8">Manage your preferences and profile</p>
 
-      <form onSubmit={handleSave} className="space-y-8">
-        {/* Messages */}
-        {message.text && (
-          <div
-            className={`rounded-lg p-4 flex items-start space-x-3 ${
-              message.type === 'success'
-                ? 'bg-green-50 border border-green-200'
-                : 'bg-red-50 border border-red-200'
-            }`}
+      {/* Messages */}
+      {message.text && (
+        <div
+          className={`rounded-lg p-4 flex items-start space-x-3 mb-6 ${
+            message.type === 'success'
+              ? 'bg-green-50 border border-green-200'
+              : 'bg-red-50 border border-red-200'
+          }`}
+        >
+          {message.type === 'success' ? (
+            <CheckCircle className="text-green-500 flex-shrink-0 mt-0.5" />
+          ) : (
+            <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" />
+          )}
+          <p
+            className={message.type === 'success' ? 'text-green-700' : 'text-red-700'}
           >
-            {message.type === 'success' ? (
-              <CheckCircle className="text-green-500 flex-shrink-0 mt-0.5" />
-            ) : (
-              <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" />
-            )}
-            <p
-              className={message.type === 'success' ? 'text-green-700' : 'text-red-700'}
-            >
-              {message.text}
-            </p>
-          </div>
-        )}
+            {message.text}
+          </p>
+        </div>
+      )}
 
+      <form onSubmit={handleSave} className="space-y-8">
         {/* Profile Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Profile</h2>
@@ -131,15 +163,35 @@ export function Settings() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">LeetCode Username</label>
-              <input
-                type="text"
-                name="leetcodeUsername"
-                value={formData.leetcodeUsername}
-                onChange={handleChange}
-                placeholder="Enter your LeetCode username"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <p className="text-xs text-gray-600 mt-1">Used to sync your solved problems</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  name="leetcodeUsername"
+                  value={formData.leetcodeUsername}
+                  onChange={handleChange}
+                  placeholder="Enter your LeetCode username"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  type="button"
+                  onClick={handleSync}
+                  disabled={syncing || !formData.leetcodeUsername}
+                  className="bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 whitespace-nowrap"
+                >
+                  {syncing ? (
+                    <>
+                      <Loader className="animate-spin" size={18} />
+                      <span>Syncing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw size={18} />
+                      <span>Sync</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              <p className="text-xs text-gray-600 mt-1">Sync your solved LeetCode problems automatically</p>
             </div>
           </div>
         </div>
@@ -231,7 +283,8 @@ export function Settings() {
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h3 className="font-medium text-blue-900 mb-2">💡 Tips:</h3>
         <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Set your LeetCode username to enable automatic problem syncing</li>
+          <li>• Enter your LeetCode username to enable automatic problem syncing</li>
+          <li>• Click "Sync" to fetch your solved problems from LeetCode</li>
           <li>• Adjust daily review limit based on your availability</li>
           <li>• Email reminders will be sent at your preferred time in your timezone</li>
         </ul>
