@@ -31,10 +31,10 @@ export function AuthProvider({ children }) {
     try {
       setError(null)
       const response = await authAPI.login(email, password)
-      const { token: newToken, user: userData } = response.data
-      localStorage.setItem('token', newToken)
-      setToken(newToken)
-      setUser(userData)
+      const token = response.data.token
+      localStorage.setItem('token', token)
+      setToken(token)
+      // Profile will be loaded by useEffect above
       return { success: true }
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed'
@@ -43,10 +43,10 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const register = async (email, password, name) => {
+  const register = async (email, password, name, leetcodeUsername = '') => {
     try {
       setError(null)
-      const response = await authAPI.register(email, password, name)
+      const response = await authAPI.register(email, password, name, leetcodeUsername)
       const { token: newToken, user: userData } = response.data
       localStorage.setItem('token', newToken)
       setToken(newToken)
