@@ -20,7 +20,8 @@ export function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({\n      ...prev,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
     }))
   }
@@ -30,12 +31,12 @@ export function Register() {
     setError('')
 
     // Validation
-    if (!formData.name.trim()) {
+    if (!formData.name || !formData.name.trim()) {
       setError('Name is required')
       return
     }
 
-    if (!formData.email.trim()) {
+    if (!formData.email || !formData.email.trim()) {
       setError('Email is required')
       return
     }
@@ -45,7 +46,7 @@ export function Register() {
       return
     }
 
-    if (formData.password.length < 6) {
+    if (!formData.password || formData.password.length < 6) {
       setError('Password must be at least 6 characters')
       return
     }
@@ -55,7 +56,7 @@ export function Register() {
       formData.email,
       formData.password,
       formData.name,
-      formData.leetcodeUsername
+      formData.leetcodeUsername || ''
     )
     if (result.success) {
       navigate('/dashboard')
