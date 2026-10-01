@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { problemsAPI } from '../api/problems'
+import { userProblemsAPI } from "../api/userProblems";
 import { AlertCircle, Plus, Loader } from 'lucide-react'
 
 export function AddProblem() {
@@ -65,7 +65,7 @@ export function AddProblem() {
         leetcodeUrl: formData.leetcodeUrl.trim(),
       }
 
-      await problemsAPI.createProblem(payload)
+      await userProblemsAPI.createUserProblem(payload)
       setSuccess(true)
       setTimeout(() => navigate('/problems'), 1500)
     } catch (err) {

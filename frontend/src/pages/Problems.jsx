@@ -134,13 +134,13 @@ export function Problems() {
                   </td>
                   <td className="px-6 py-4 flex items-center space-x-3">
                     <a
-                      href={problem.leetcodeUrl}
+                      href={`https://leetcode.com/problems/${problem.titleSlug}/`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-600 transition-colors"
                       title="View on LeetCode"
                     >
-                      <ExternalLink size={18} />
+                    <ExternalLink size={18} />
                     </a>
                     <button
                       onClick={() => handleDelete(problem._id)}

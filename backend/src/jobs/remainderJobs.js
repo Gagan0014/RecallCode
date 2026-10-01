@@ -8,7 +8,7 @@ export const startReminderJob = () => {
 
         const users = await User.find(
             {
-                reviewTime: { $exists: true }
+                emailTime: { $exists: true }
             }
         );
 
@@ -25,7 +25,7 @@ export const startReminderJob = () => {
                 }
             ).format(new Date());
 
-            if (user.reviewTime !== currentTime) {
+            if (user.emailTime !== currentTime) {
                 continue;
             }
         // Prevent duplicate email

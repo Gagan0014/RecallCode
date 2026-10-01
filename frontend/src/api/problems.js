@@ -14,8 +14,11 @@ export const problemsAPI = {
     apiClient.post('/problems', problemData),
   
   // Rate a problem (SM-2 update)
-  rateProblem: (problemId, rating) =>
-    apiClient.post('/problems/rate', { problemId, rating }),
+  rateProblem: (userProblemId, quality) =>
+  apiClient.post('/problems/rate', {
+    userProblemId,
+    quality
+  }),
   
   // Sync with LeetCode
   syncLeetCode: (leetcodeUsername) =>

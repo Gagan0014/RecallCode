@@ -13,18 +13,36 @@ export const createProblem = async(req,res)=>{
     }
 }
 
-export const getMyProblems = async(req,res)=>{
-    try{
+export const getMyProblems = async (req, res) => {
+    try {
         const userProblems = await UserProblems.find({
             userId: req.user.id
         }).populate("problemId");
-        res.status(200).json(userProblems);
-    }catch(error){
+
+        const problems = userProblems.map((userProblem) => ({
+            _id: userProblem._id,
+
+            title: userProblem.problemId?.title,
+            titleSlug: userProblem.problemId?.titleSlug,
+            difficulty: userProblem.problemId?.difficulty,
+            leetcodeUrl: userProblem.problemId?.leetcodeUrl,
+
+            repetitions: userProblem.repetitions,
+            interval: userProblem.interval,
+            easeFactor: userProblem.easeFactor,
+            nextReviewDate: userProblem.nextReviewDate
+        }));
+
+        res.status(200).json(problems);
+
+    } catch (error) {
+        console.error(error);
+
         res.status(500).json({
-            message:error.message
-        })
+            message: error.message
+        });
     }
-}
+};
 
 export const getProblems = async(req,res)=>{
     try{
@@ -36,22 +54,41 @@ export const getProblems = async(req,res)=>{
         })
     }
 }
-export const dueProblems = async(req,res)=>{
-    try{
+export const dueProblems = async (req, res) => {
+    try {
         const user = await User.findById(req.user.id);
-        const problems = await UserProblems.find({
+
+        const userProblems = await UserProblems.find({
             userId: req.user.id,
-            nextReviewDate:{ $lte: new Date()}
+            nextReviewDate: { $lte: new Date() }
         })
         .limit(user.dailyReviewLimit)
-        .populate("problemId")
-        res.status(200).json(problems)
-    }catch(error){
+        .populate("problemId");
+
+        const problems = userProblems.map((userProblem) => ({
+            _id: userProblem._id,
+
+            title: userProblem.problemId?.title,
+            titleSlug: userProblem.problemId?.titleSlug,
+            difficulty: userProblem.problemId?.difficulty,
+            leetcodeUrl: userProblem.problemId?.leetcodeUrl,
+
+            repetitions: userProblem.repetitions,
+            interval: userProblem.interval,
+            easeFactor: userProblem.easeFactor,
+            nextReviewDate: userProblem.nextReviewDate
+        }));
+
+        res.status(200).json(problems);
+
+    } catch (error) {
+        console.error(error);
+
         res.status(500).json({
-            message:error.message
+            message: error.message
         });
     }
-}
+};
 export const rateProblem = async(req,res)=>{
     try{
         const {userProblemId , quality} = req.body;

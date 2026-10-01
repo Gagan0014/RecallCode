@@ -86,30 +86,32 @@ export const getMe = async (req, res) => {
         });
     }
 };
-export const updatePreferences = async(req,res)=>{
-    try{
+export const updatePreferences = async (req, res) => {
+    try {
         const user = await User.findByIdAndUpdate(
             req.user.id,
             {
-                reviewTime: req.body.reviewTime,
+                emailTime: req.body.emailTime,
                 timeZone: req.body.timeZone,
-                dailyReviewLimit: req.body.dailyReviewLimit
+                dailyReviewLimit: req.body.dailyReviewLimit,
+                name: req.body.name,
+                leetcodeUsername: req.body.leetcodeUsername
             },
             {
-                new:true
+                new: true
             }
         );
+
         if (!user) {
-            return res.status(404).json(
-                {
-                    message: "User not found" 
-                }); 
-        }   
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
 
         res.status(200).json(user);
-    }catch(error){
+    } catch (error) {
         res.status(500).json({
-            message:error.message
+            message: error.message
         });
     }
-}
+};
